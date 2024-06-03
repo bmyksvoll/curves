@@ -4,6 +4,9 @@ from scipy.linalg import block_diag
 from curves import axis
 from datetime import datetime
 
+#  spline knot j = 1, ..., n − 1 and contract i = 1, ..., m
+
+
 def calc_H(tau_b, tau_e):
     return np.matrix([
         [(144 / 5) * (tau_e**5 - tau_b**5),    18 * (tau_e**4 - tau_b**4),    8 * (tau_e**3 - tau_b**3), 0, 0],
@@ -13,6 +16,8 @@ def calc_H(tau_b, tau_e):
         [                   0,                0,               0, 0, 0],
     ])
 
+
+#The block diagonal matrix H has dimensions (5n × 5n) and ∆j = t_j+1 − tj
 def calc_big_H(taus):
     h_matrices = []
     for i in range(0, len(taus)):
@@ -20,7 +25,7 @@ def calc_big_H(taus):
         h_matrices.append(calc_H(tau_b, tau_e))
     return block_diag(*h_matrices)
 
-def calc_avg_constraint(tau_b, tau_e):
+def calc_integral_constraint(tau_b, tau_e):
     return np.matrix([(tau_e**5 - tau_b**5) / 5, (tau_e**4 - tau_b**4) / 4, (tau_e**3 - tau_b**3) / 3, (tau_e**2 - tau_b**2) / 2, tau_e - tau_b])
 
 def calc_constraints(u_j):
@@ -32,20 +37,25 @@ def calc_constraints(u_j):
         [12 * u_j**2, 6 * u_j**1,          2,      0,   0]
     ])
 
+# A is a (3n + m − 2 × 5n) matrix 
 def calc_big_A(knots, taus):
-    A = npm.zeros((4 * len(knots) + 1, 5 * len(knots) + 5))
-    for i, knot in enumerate(knots):
-        tau_b, tau_e = taus[i]
+    m = len(taus)
+    n = len(knots)- 1 
+    #A = npm.zeros((4 * len(knots) + 1, 5 * len(knots) + 5))
+    A = npm.zeros((3 * n + m - 2, 5 * n))
+    constrain_knots = knots[1:-1]
+    for i, knot in enumerate(constrain_knots):
         c1 = calc_constraints(knot)
-        c2 = calc_avg_constraint(tau_b, tau_e)
+        #c2 = calc_integral_constraint(tau_b, tau_e)
         A[(4 * i):(4 * i + 3), (5 * i):(5 * i + 5)] = c1
         A[(4 * i):(4 * i + 3), (5 * i + 5):(5 * i + 10)] = - c1
-        A[(4 * i + 3), (5 * i):(5 * i + 5)] = c2
+        #A[(4 * i + 3), (5 * i):(5 * i + 5)] = c2
     # Last line only subject to the average constraint.
     tau_b, tau_e = taus[-1]
-    A[-1, -5:] = calc_avg_constraint(tau_b, tau_e)
+    A[-1, -5:] = calc_integral_constraint(tau_b, tau_e)
     return A
 
+# B is a (3n + m − 2 × 1) vector.
 def calc_B(prices, taus):
     B = npm.zeros(4 * len(taus) - 3)
     for i in range(0, len(taus) - 1):

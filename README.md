@@ -14,7 +14,11 @@ Other sources include
 
 - Previous Excel VBA implementation
 - etrm package in R by Anders Sleire https://github.com/sleire/etrm
- 
+
+Curvy:
+- does not support gaps in prices 
+- Not been updated for 5 years. Not maintained.
+
 
 **_Your feedback matters_** - This library is still in development. Any feedback regarding improvements or errors in the curve builder is very much appreciated! 
 
@@ -32,3 +36,11 @@ markets](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.470.8485&rep=r
 Bugs or suggestions? Please don't hesitate to post an issue on it!
 
 Maintainer: Bjarte Myksvoll
+
+
+# Develop & Build
+pip install --editable .
+
+python -m build.
+
+

@@ -7,7 +7,8 @@ import math
 
 # Takes in the start date for the Day Ahead and converts in into a datetime with daily resolution.
 def da_date(start_date):
-    return datetime.date(start_date.year, start_date.month, start_date.day + 1)
+    #return datetime.date(start_date.year, start_date.month, start_date.day + 1)
+    return start_date + relativedelta(days=1)
 
 # Takes in the start date for the Bound of Month and returns a list of all days remaining in the BOM.
 def bom_dates(start_date):
