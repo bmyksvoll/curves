@@ -1,12 +1,10 @@
 import numpy as np
 import numpy.matlib as npm
 from scipy.linalg import block_diag
-from curves import axis
+#from curves import axis
 from datetime import datetime
 
 #  spline knot j = 1, ..., n − 1 and contract i = 1, ..., m
-
-
 def calc_H(tau_b, tau_e):
     return np.matrix([
         [(144 / 5) * (tau_e**5 - tau_b**5),    18 * (tau_e**4 - tau_b**4),    8 * (tau_e**3 - tau_b**3), 0, 0],
@@ -18,17 +16,17 @@ def calc_H(tau_b, tau_e):
 
 
 #The block diagonal matrix H has dimensions (5n × 5n) and ∆j = t_j+1 − tj
-def calc_big_H(taus):
+def calc_big_H(knots):
+    n = len(knots)- 1 
     h_matrices = []
-    for i in range(0, len(taus)):
-        tau_b, tau_e = taus[i]
-        h_matrices.append(calc_H(tau_b, tau_e))
+    for i in range(0, n):
+        h_matrices.append(calc_H(knots[i], knots[i+1]))
     return block_diag(*h_matrices)
 
 def calc_integral_constraint(tau_b, tau_e):
     return np.matrix([(tau_e**5 - tau_b**5) / 5, (tau_e**4 - tau_b**4) / 4, (tau_e**3 - tau_b**3) / 3, (tau_e**2 - tau_b**2) / 2, tau_e - tau_b])
 
-def calc_constraints(u_j):
+def calc_knot_constraints(u_j):
     # Using the four contraints: connectivity, continuous, smooth and maintaining the average.
     # Excluding the requirement for the line to be zero at the end.
     return np.matrix([
@@ -39,30 +37,37 @@ def calc_constraints(u_j):
 
 # A is a (3n + m − 2 × 5n) matrix 
 def calc_big_A(knots, taus):
+
     m = len(taus)
     n = len(knots)- 1 
-    #A = npm.zeros((4 * len(knots) + 1, 5 * len(knots) + 5))
+
     A = npm.zeros((3 * n + m - 2, 5 * n))
-    constrain_knots = knots[1:-1]
-    for i, knot in enumerate(constrain_knots):
-        c1 = calc_constraints(knot)
-        #c2 = calc_integral_constraint(tau_b, tau_e)
-        A[(4 * i):(4 * i + 3), (5 * i):(5 * i + 5)] = c1
-        A[(4 * i):(4 * i + 3), (5 * i + 5):(5 * i + 10)] = - c1
-        #A[(4 * i + 3), (5 * i):(5 * i + 5)] = c2
-    # Last line only subject to the average constraint.
-    tau_b, tau_e = taus[-1]
-    A[-1, -5:] = calc_integral_constraint(tau_b, tau_e)
+    inner_knots = knots[1:-1]
+    for i, knot in enumerate(inner_knots):
+        c1 = calc_knot_constraints(knot)
+        A[(3 * i):(3 * i + 3), (5 * i):(5 * i + 5)] = c1
+        A[(3 * i):(3 * i + 3), (5 * i + 5):(5 * i + 10)] = - c1
+
+    # End constraint last knot.
+    A[3*(n-1), -5:] =[ 4 *knots[-1]**3, 3 * knots[-1]**2, 2 * knots[-1],  1,  0]
+
+    # No-arbitrage constraints.
+    for j, tau in enumerate(taus):
+        tau_b, tau_e = tau
+        c2 = calc_integral_constraint(tau_b, tau_e)
+        A[(3*(n-1) + 1 + j), (5 * j):(5 * j + 5)] = c2
+    
     return A
 
 # B is a (3n + m − 2 × 1) vector.
-def calc_B(prices, taus):
-    B = npm.zeros(4 * len(taus) - 3)
-    for i in range(0, len(taus) - 1):
+def calc_B(prices, knots, taus ):
+    m = len(taus)
+    n = len(knots)- 1     
+    
+    B = npm.zeros(3 * n +m- 2  )
+    for i in range(0, len(taus) ):
         tau_b, tau_e = taus[i]
-        B[:, 4 * i + 3] = prices[i] * (tau_e - tau_b)
-    tau_b, tau_e = taus[-1]
-    B[:, -1] = prices[-1] * (tau_e - tau_b)
+        B[:, 3*(n-1) + 1 + i] = prices[i] * (tau_e - tau_b)
     return B.T
 
 # Solves the linear equation and return only the x values (scraps lambda).
