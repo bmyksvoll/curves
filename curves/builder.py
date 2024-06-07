@@ -55,7 +55,7 @@ def calc_big_A(knots, taus):
     for j, tau in enumerate(taus):
         tau_b, tau_e = tau
         c2 = calc_integral_constraint(tau_b, tau_e)
-        A[(3*(n-1) + 1 + j), (5 * j):(5 * j + 5)] = c2
+        A[(3*(n-1) + 1 + j), (5 * (j+1)):(5 * (j+1) + 5)] = c2
     
     return A
 
