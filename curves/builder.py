@@ -93,44 +93,9 @@ def solve_lineq(H, A, B, split=True, num_params=5):
 def smfc(u, params):
     return params[0] * u**4 + params[1] * u**3 + params[2] * u**2 + params[3] * u + params[4]
 
-def curve_values(ranges, X, curve_func, flatten=False):
-    if len(ranges) != len(X):
-        raise ValueError('Arrays do not match in length')
-    ranges_se = axis.start_end_absolute_index(ranges)
-    x_index = axis.full_index(ranges_se)
-    x_ranges = []
-    for i, r in enumerate(x_index):
-        x_ranges.append(curve_func(np.array(r, dtype='int64'), X[i]))
-    if flatten:
-        return np.concatenate(x_ranges)
-    else:
-        return x_ranges
-
-def calc_smfc(dr, prices, flatten=True):
-    taus = axis.start_end_absolute_index(dr, overlap=1)
-    knots = axis.knot_index(taus)
+def calc_smfc(taus, knots, prices, flatten=True):
     H = calc_big_H(taus)
     A = calc_big_A(knots, taus)
     B = calc_B(prices, taus)
     X = solve_lineq(H, A, B)
-    return curve_values(dr, X, smfc, flatten=flatten)
-
-def build_smfc_curve(prices, start_date=None, flatten=True, corr_avg=False):
-    if start_date is None:
-        start_date = datetime.now()
-    x, y, dr, pr = axis.get_ranges(start_date, prices)
-    y_smfc = calc_smfc(dr, prices, flatten)
-
-    if (corr_avg):
-        y_smfc_no_flat = calc_smfc(dr, prices, False)
-        diff = avg_diff(y_smfc_no_flat, prices)
-        corrected_prices = [f - d for f, d in zip(prices, diff)]
-        y_smfc = calc_smfc(dr, corrected_prices, flatten)
-
-    return x, y, dr, pr, y_smfc
-
-def avg_diff(y_smfc_no_flat, forward_prices):
-    diff = []
-    for i, r in enumerate(y_smfc_no_flat):
-        diff.append(np.array(r).mean() - forward_prices[i])
-    return diff
+    return X
