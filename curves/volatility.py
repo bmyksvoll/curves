@@ -1,55 +1,12 @@
-from numpy import sqrt, log
+import matplotlib.pyplot as plt
+import numpy as np
 
 
-def sigma_bs(t, a= 0.9, b = 0.6, c= 0.1):
-    return a / (t + b) + c
+def integral_brs(s,T, a, b,c):
+    return(a**2/(T - s + b) - 2*a*c*log(T - s + b) + c**2*s)
 
-def var_bs_integral(t, a= 0.9, b = 0.6, c= 0.1):
-    return -a**2/(b + t) + 2*a*c*log(b + t) + c**2*t
-
-
-def var_bs_F1(t, a= 0.9, b = 0.6):
-    return a**2/(b + t)
-    
-def var_bs_F2(t, a= 0.9, b = 0.6, c = 0.1):
-    return -2*a*c*log(b + t)
-
-def var_bs_F3(t, c = 0.1):
-    return c**2*t
-
-
-# f2 = sqrt((2*a*c)/(t+b))
-# f3 = c
-
-t = 1
-a= 0.9
-b = 0.6
-c= 0.1
-    
-sigma_bs(1) 
-
-
-
-#Test Function equivalence
-#print("Test Function equivalence:")
-print(var_bs_integral(t, a,b,c)-var_bs_integral(0, a,b,c))
-
-#print(var_bs_F1(t, a,b)+var_bs_F2(t, a,b,c)+var_bs_F3(t, c))
-
-
-
-#
-# 
-# 
-# 
-# print("Test Integral equivalence:")
-
-#print(var_bs_F1(t, a,b))
-#print(var_bs_F2(t, a,b,c))
-#print(var_bs_F3(t, c))
-
-
-
-
-
-
+def volatility(t, tau, T, a,  b, c):
+    upper_integral = integral_brs(tau, T, a,b,c ) 
+    lower_integral = integral_brs(t, T, a,b,c ) 
+    variance =  (upper_integral - lower_integral)/(tau-t)
+    return np.sqrt(variance)
