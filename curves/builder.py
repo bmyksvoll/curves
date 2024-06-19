@@ -2,7 +2,7 @@ import numpy as np
 import numpy.matlib as npm
 from numpy.polynomial import Polynomial
 from scipy.linalg import block_diag
-from datetime import datetime
+#from datetime import datetime
 
 #  spline knot j = 1, ..., n − 1 and contract i = 1, ..., m
 def calc_H(tau_b, tau_e):

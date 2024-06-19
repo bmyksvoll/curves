@@ -59,7 +59,7 @@ def simulate_clewlow_strickland_vectorized(theta, mu, sigma, F0, dt, T, paths):
 # Parameters for the Clewlow-Strickland one-factor model
 theta = 0.15  # Rate of mean reversion
 mu = 0.5  # Long-term mean
-sigma = 0.002  # Volatility parameter
+sigma = 0.02  # Volatility parameter
 F0 = 0.03  # Initial forward price
 dt = 1/12  # Daily time step
 T = 20  # Total time of the simulation in years
