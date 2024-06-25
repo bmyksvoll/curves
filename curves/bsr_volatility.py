@@ -1,7 +1,19 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy.special import spence
 
+
+""" Implementation of volatilty and variance functions from paper
+Chapter
+
+Valuation and Risk Management in the Norwegian Electricity Market
+Energy, Natural Resources and Environmental Economics, 2010
+
+ISBN : 978-3-642-12066-4
+
+Petter Bjerksund, Heine Rasmussen, Gunnar Stensland
+ """
+
+# Generic demo forward curve used for testing only
 def term_structure(t):
     T_max= t[-1]
     # Define a term structure function that could depend on t
