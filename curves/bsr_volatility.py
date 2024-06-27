@@ -28,27 +28,27 @@ def sigma_instantanous(t, T, a= 0.9, b = 0.6, c= 0.1):
 def sigma_brs (t, tau, T, a,b,c):
     upper = (a**2/(T - tau + b) - 2*a*c*np.log(T - tau + b) + c**2*tau) 
     lower = (a**2/(T - t + b) - 2*a*c*np.log(T - t + b) + c**2*t) 
-    var = (upper-lower)/(tau-t)
-    return(np.sqrt(var))
+    var = (upper-lower)
+    return(np.sqrt(var/(tau-t)))
 
 def sigma_factor1(t, tau ,T, a, b):
     upper = (a**2/(T - tau + b))
     lower = (a**2/(T - t + b))
-    var = (upper-lower)/(tau-t)
-    return(np.sqrt(var))
+    var = (upper-lower)
+    return(np.sqrt(var/(tau-t)))
 
 def sigma_factor2(t, tau,T, a, b,c):
     upper = (- 2*a*c*np.log(T - tau + b))
     lower = (- 2*a*c*np.log(T - t + b))
-    var = (upper-lower)/(tau-t)
-    return(np.sqrt(var))
+    var = (upper-lower)
+    return(np.sqrt(var/(tau-t)))
 
 
 def sigma_factor3(t, tau,T,c):
     upper = (c**2*tau)
     lower = (c**2*t)
-    var = (upper-lower)/(tau-t)
-    return(np.sqrt(var))
+    var = (upper-lower)
+    return(np.sqrt(var/(tau-t)))
 
 def sigma_plugin(t, tau, T1, T2, a, b,c):
     
