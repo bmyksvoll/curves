@@ -1,3 +1,4 @@
+import pandas as pd
 from pandas.tseries.offsets import CustomBusinessDay
 from pandas.tseries.holiday import AbstractHolidayCalendar, DateOffset, Holiday, next_monday, next_monday_or_tuesday, GoodFriday, EasterMonday, nearest_workday, MO
 
@@ -18,7 +19,11 @@ uk_bd = CustomBusinessDay(calendar=UKBusinessCalendar())
 
 # Function to calculate the first trading day which is one UK business days before the first of next month
 # Last trading day is two UK business days before the first of next month
-def calculate_first_trading_day(date):
-    first_day_next_month = pd.Timestamp(date.year + int(date.month == 12), date.month % 12 + 1, 1)
+def is_first_trading_day(trade_date):
+    first_day_next_month = pd.Timestamp(trade_date.year + int(trade_date.month == 12), trade_date.month % 12 + 1, 1)
     first_trading_day = first_day_next_month - 1 * uk_bd
-    return first_trading_day
+    if first_trading_day == trade_date:
+        return True
+    else:
+        return False
+    
