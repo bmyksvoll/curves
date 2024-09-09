@@ -1,20 +1,19 @@
 [![Build Status](https://travis-ci.org/equinor/curves.svg?branch=master)](https://travis-ci.org/equinor/curves)
 
 # Curves
-Smooth Forward Price Curve builder for Python. 
+Smooth Forward Price Curve builder and Monte Carlo Simulation for Python. 
 
 **_Your feedback matters_** - This library is still in development. Any feedback regarding improvements or errors in the curve builder is very much appreciated! 
 
 # Theory
+
 This library is based on theory from multiple sources (see Credits)
 
 
-### Using
 
 # Credits
 
 This package is based on the brilliant work of of others:
-
 
 - Bjerksund, P., Rasmussen, H., Stensland, G. (2010). Valuation and Risk Management in the Norwegian Electricity Market. In: Bjørndal, E., Bjørndal, M., Pardalos, P., Rönnqvist, M. (eds) Energy, Natural Resources and Environmental Economics. Energy Systems. Springer, Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-12067-1_11
 - Joachim Blaafjell Holwech, notably his Curvy https://github.com/equinor/curvy package. For a tutorial see https://holwech.github.io/blog/curvy/. Based on "[Constructing forward price curves in electricity
@@ -31,8 +30,13 @@ Maintainer: Bjarte Myksvoll
 
 
 # Develop & Build
+The project is set up using[SetupTools]( https://setuptools.pypa.io/en/latest/userguide/quickstart.html) using flat-layout
+(also known as “adhoc”)
+
+The package folder(s) are placed directly under the project root:
+
 pip install --editable .
 
-python -m build.
+python -m build
 
 
